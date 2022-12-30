@@ -1,11 +1,11 @@
 R = Rscript $^ $@
 
 data/ts_data_for_analysis.RDS: code/prep_ts_data.R data/ts_data.csv config_general.json
-
+	${R} 
+	
 all_data: data/ts_data_for_analysis.RDS
 
 ### UTILITIES
-
 
 utils/plotting_fxns.RData: code/plotting_fxns.R
 	${R}

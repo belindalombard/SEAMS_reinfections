@@ -15,9 +15,8 @@
 # The functions in this file are modified from code written by Carl A.B. Pearson
 # (https://github.com/pearsonca) and shared with his permission.
 
-suppressPackageStartupMessages({
-  library(ggplot2)
-})
+#install.packages('ggplot2', repos = "http://cran.us.r-project.org")
+library('ggplot2')
 
 .debug <- 'utils'
 .args <- if (interactive()) sprintf(c(

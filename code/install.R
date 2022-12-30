@@ -48,4 +48,3 @@ ss <- sessionInfo()
 
 # output version information for comparison to the ones listed README.md that
 # were used for manuscript preparation
-saveRDS(ss, target)
