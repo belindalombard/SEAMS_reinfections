@@ -1,3 +1,11 @@
+# Citation: Pulliam, JRC, C van Schalkwyk, N Govender, A von Gottberg, C 
+# Cohen, MJ Groome, J Dushoff, K Mlisana, and H Moultrie. (2022) Increased
+# risk of SARS-CoV-2 reinfection associated with emergence of Omicron in
+# South Africa. _Science_ <https://www.science.org/doi/10.1126/science.abn4947>
+# 
+# Repository: <https://github.com/jrcpulliam/reinfection
+
+
 
 .debug <- '.'
 .args <- if (interactive()) sprintf(c(
@@ -7,7 +15,11 @@
 target <- tail(.args, 1)
 
 #Dataframe "data" given with columns cases (the reported number of cases that enters the suceptible "pool"),
-#date, and observed (the observed number of reinfections coming from the susceptible pool)
+# date, and observed (the observed number of reinfections coming from the susceptible pool)
+
+#In the data passed to this function, the susceptible pool will come from cases,
+# and the expected infections & observed columns represents the number of cases expected
+# and the number of cases `reported`
 
 expected <- function(parms = disease_params(), data, delta=cutoff ) with(parms, {
   hz <- lambda * data[date <= omicron_date]$ma_tot
@@ -20,9 +32,12 @@ expected <- function(parms = disease_params(), data, delta=cutoff ) with(parms, 
     out$expected_infections[(day+delta):nrow(data)] <- out$expected_infections[(day+delta):nrow(data)]+tmp
   }
   return (out)
-
 })
 
+split_path <- function(path) {
+  if (dirname(path) %in% c(".", path)) return(basename(path))
+  return(c(basename(path), split_path(dirname(path))))
+}
 
 nllikelihood <- function(parms = disease_params(), data) with(parms, {
   tmp <- expected(parms, data)
@@ -31,4 +46,4 @@ nllikelihood <- function(parms = disease_params(), data) with(parms, {
   return(-sum(log_p))
 })
 
-save(expected, nllikelihood, file = target)
+save(expected, nllikelihood, split_path, file = target)

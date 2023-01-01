@@ -24,27 +24,29 @@ suppressPackageStartupMessages({
 
 .debug <- ''
 .args <- if (interactive()) sprintf(c(
-  file.path('output', 'posterior_90_null_third.RData'), # input
   file.path('output', 'posterior_90_null.RData'),
+  file.path('utils', 'fit_functions.RData'),
   file.path('config_general.json'),
-  file.path('output', 'convergence_plot.png'),
-  file.path('output', 'convergence_plot_third.png') # output
+  2,
+  file.path('output', 'convergence_plot.png')
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
-
+load(.args[2])
 
 configpth <- .args[3]
 attach(jsonlite::read_json(configpth))
 
-if (infection=="second"){
-  target <- .args[4]
-  load(.args[2])
-}
-if (infection=="third"){
-  target <- tail(.args, 1)
-  load(.args[1])
-  
-}
+infections <- .args[4]
+
+
+# set target
+target_path <- split_path(tail(.args, 1))
+target <- file.path(rev(target_path[2:length(target_path)]), paste0(infections, '_', target_path[1]))
+
+
+# load file
+load_path <- split_path(.args[1])
+load(file.path(rev(load_path[2:length(load_path)]), paste0(infections, '_', load_path[1])))
 
 
 tmp <- data.table(rbind(

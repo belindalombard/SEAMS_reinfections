@@ -60,4 +60,9 @@ scale_x_Ms <- gg_scale_wrapper(
   minor_breaks = 'month'
 )
 
-save(gg_scale_wrapper, scale_x_Ms, file = target)
+split_path <- function(path) {
+  if (dirname(path) %in% c(".", path)) return(basename(path))
+  return(c(basename(path), split_path(dirname(path))))
+}
+
+save(gg_scale_wrapper, scale_x_Ms, split_path, file = target)

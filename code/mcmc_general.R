@@ -1,4 +1,14 @@
-#Includes the generic mcmc functions that can be used in any cases (first reinfection, second reinfections, third reinfections)
+#Includes the generic mcmc functions that can be used in any cases.
+
+# Citation: Pulliam, JRC, C van Schalkwyk, N Govender, A von Gottberg, C 
+# Cohen, MJ Groome, J Dushoff, K Mlisana, and H Moultrie. (2022) Increased
+# risk of SARS-CoV-2 reinfection associated with emergence of Omicron in
+# South Africa. _Science_ <https://www.science.org/doi/10.1126/science.abn4947>
+# 
+# Repository: <https://github.com/jrcpulliam/reinfection
+
+
+# It contains some adjusted functions used in the abovementioned file. 
 
 suppressPackageStartupMessages({
   library(coda)
@@ -7,29 +17,12 @@ suppressPackageStartupMessages({
   library(dplyr)
 })
 
-
-
-
 .debug <- ''
 .args <- if (interactive()) sprintf(c(
-  file.path('data', 'ts_data_for_analysis.RDS'), # input
-  file.path('utils', 'fit_functions.RData'),
-  file.path('config_general.json'), 
   file.path('utils', 'mcmc_functions.RData') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
-
-load(.args[2]) #Load the fitting functions
-
-ts <- readRDS(.args[1]) #Original observed cases
-
-configpth <- .args[3]
-
 target <- tail(.args, 1)
-
-attach(jsonlite::read_json(configpth))
-
-
 
 lprior <- function(parms=disease_params()) with(parms, {
   lp <- 0;
@@ -48,7 +41,7 @@ llikePrior <- function(fit.params = NULL,
   -nllikelihood(parms, data=data) + lprior(parms)
 }
 
-# Want to be able to easily log and unlog parameters
+# Log and anlog parameters
 logParms <- function(alist) {
   alist <- log(alist)
   names(alist) <- paste0('log',names(alist))
@@ -170,7 +163,11 @@ do.mcmc <- function(n_chains) {
   return (mcmc.run)
 }
 
+split_path <- function(path) {
+  if (dirname(path) %in% c(".", path)) return(basename(path))
+  return(c(basename(path), split_path(dirname(path))))
+}
 
-
-save(doChains, mcmcParams, default.proposer, initRand, mcmcSampler, logParms, unlogParms, lprior, llikePrior, do.mcmc, file = target)
+#Save defined functions
+save(split_path, doChains, mcmcParams, default.proposer, initRand, mcmcSampler, logParms, unlogParms, lprior, llikePrior, do.mcmc, file = target)
 

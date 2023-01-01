@@ -1,10 +1,4 @@
-# This file is made available under a CC-BY-NC 4.0 International License.
-# Details of the license can be found at
-# <https://creativecommons.org/licenses/by-nc/4.0/legalcode>. 
-# 
-# Giving appropriate credit includes citation of the related publication and
-# providing a link to the repository:
-# 
+
 # Citation: Pulliam, JRC, C van Schalkwyk, N Govender, A von Gottberg, C 
 # Cohen, MJ Groome, J Dushoff, K Mlisana, and H Moultrie. (2022) Increased
 # risk of SARS-CoV-2 reinfection associated with emergence of Omicron in
@@ -19,38 +13,46 @@ suppressPackageStartupMessages({
 .debug <- ''
 .args <- if (interactive()) sprintf(c(
   file.path('output', 'posterior_90_null.RData'), # input
-  file.path('output', 'posterior_90_null_third.RData'), #input for third infections
   file.path('data', 'ts_data_for_analysis.RDS'), # input
   file.path('utils', 'fit_functions.RData'),
   file.path('config_general.json'), # NOTE: change this to do full run!
-  file.path('output', 'sim_90_null_third.RDS'),
+  2, 
   file.path('output', 'sim_90_null.RDS') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+#Get infection data
+ts <- readRDS(.args[2])
 
-ts <- readRDS(.args[3])
+#Load fitting functions
+load(.args[3])
 
-load(.args[4])
-
-
-configpth <- .args[5]
+#Attach config path
+configpth <- .args[4]
 attach(jsonlite::read_json(configpth))
 
-if (infection=="second") {
-  load(.args[1])
-  target <- tail(.args, 1)
+infections <- .args[5]
+
+# set target
+target_path <- split_path(tail(.args, 1))
+target <- file.path(rev(target_path[2:length(target_path)]), paste0(infections, '_', target_path[1]))
+
+# load file
+load_path <- split_path(.args[1])
+load(file.path(rev(load_path[2:length(load_path)]), paste0(infections, '_', load_path[1])))
+
+
+if (infections==2){
+  ts_adjusted <- ts[, c("date", "reinf", "ma_tot", "cnt" )]
+  names(ts_adjusted) <- c("date", "observed", "ma_tot", "cases")
 }
 
-if (infection=="third"){
-  load(.args[2])
-  target <- tail(.args[6])
-  #Adjust the ts to have columns needed for analysis
+if (infections==3){
   ts_adjusted <- ts[, c("date", "third", "ma_tot", "reinf" )]
   names(ts_adjusted) <- c("date", "observed", "ma_tot", "cases")
 }
 
-
-set.seed(2021)
+#set seed
+set.seed(1)
 
 
 sim_reinf <- function(ii){

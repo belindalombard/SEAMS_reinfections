@@ -6,24 +6,31 @@ suppressPackageStartupMessages({
 
 .debug <- './reinf'
 .args <- if (interactive()) sprintf(c(
-  "output/sim_90_null_third.RDS", # input
+  "output/sim_90_null.RDS", # input
   "data/ts_data_for_analysis.RDS",
   "config_general.json",
   "utils/plotting_fxns.RData",
-  "output/simplot_90_null_third.png" # output
+  2, 
+  "output/simplot_90_null.png" # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
-sims <- readRDS(.args[1])
+infections <- .args[5]
+
 ts <- readRDS(.args[2])
 
 configpth <- .args[3]
 attach(jsonlite::read_json(configpth))
 
-fit_through <- '2022-01-31'
-
 load(.args[4])
 
-target <- tail(.args, 1)
+# set target
+target_path <- split_path(tail(.args, 1))
+target <- file.path(rev(target_path[2:length(target_path)]), paste0(infections, '_', target_path[1]))
+
+# load file
+load_path <- split_path(.args[1])
+sims <- readRDS(file.path(rev(load_path[2:length(load_path)]), paste0(infections, '_', load_path[1])))
+
 
 sri <- data.table(date = ts$date, sims)
 sri_long <- melt(sri, id.vars = 'date')
@@ -43,7 +50,7 @@ plot_sim <- function(dat, sim, sim_ma) (ggplot(dat)
                                 + geom_point(aes(y = third), size = .2, color = '1', alpha = .3)
                                 + geom_ribbon(data = sim_ma, aes(x = date, ymin = low_reinf, ymax = upp_reinf), alpha = .3, fill = '2')
                                 + geom_line(aes(y = ma_third), color = '2')
-                                + ylab('Third infections')
+                                + ylab(paste0('Infection number: ', infections))
                                 + xlab('Specimen receipt date')
                                 + geom_vline(aes(xintercept = 1 + as.Date(fit_through)), linetype = 3, color = 'red')
                                 + theme_minimal()
@@ -68,9 +75,9 @@ plot_sim <- function(dat, sim, sim_ma) (ggplot(dat)
 inc_reinf <- (plot_sim(ts, eri, eri_ma) 
               + geom_text(aes(label = year, y = 0), data = ts[, .(year = format(date, '%Y'), date)][, .(date = min(date)), by = year], vjust = -31, hjust = 'left', nudge_x = 14, size = 7*0.35)
 )
-inc_reinf_fit <- (plot_sim(ts[between(date, as.Date('2020-12-01'), as.Date(fit_through))], eri[between(date, as.Date('2020-12-01'), as.Date(fit_through))], eri_ma[between(date, as.Date('2020-12-01'), as.Date(fit_through))])
+inc_reinf_fit <- (plot_sim(ts[between(date, as.Date('2020-03-20'), as.Date(fit_through))], eri[between(date, as.Date('2020-03-20'), as.Date(fit_through))], eri_ma[between(date, as.Date('2020-12-01'), as.Date(fit_through))])
                   + ggtitle('Fitting period')
-                  + geom_text(aes(label = year, y = 0), data = ts[between(date, as.Date('2021-01-01'), as.Date(fit_through)), .(year = format(date, '%Y'), date)][, .(date = min(date)), by = year], vjust = -13, hjust = 'left', nudge_x = 14, size = 7*0.35)
+                  + geom_text(aes(label = year, y = 0), data = ts[between(date, as.Date('2020-03-20'), as.Date(fit_through)), .(year = format(date, '%Y'), date)][, .(date = min(date)), by = year], vjust = -13, hjust = 'left', nudge_x = 14, size = 7*0.35)
 )
 inc_reinf_proj <- (plot_sim(ts[date > as.Date(fit_through)], eri[date > as.Date(fit_through)], eri_ma[date > as.Date(fit_through)])
                    + ggtitle('Projection period')

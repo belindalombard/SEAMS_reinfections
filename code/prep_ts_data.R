@@ -1,25 +1,15 @@
-# This file is made available under a CC-BY-NC 4.0 International License.
-# Details of the license can be found at
-# <https://creativecommons.org/licenses/by-nc/4.0/legalcode>. 
-# 
-# Giving appropriate credit includes citation of the related publication and
-# providing a link to the repository:
-# 
 # Citation: Pulliam, JRC, C van Schalkwyk, N Govender, A von Gottberg, C 
 # Cohen, MJ Groome, J Dushoff, K Mlisana, and H Moultrie. (2022) Increased
 # risk of SARS-CoV-2 reinfection associated with emergence of Omicron in
 # South Africa. _Science_ <https://www.science.org/doi/10.1126/science.abn4947>
 # 
-# Repository: <https://github.com/jrcpulliam/reinfections>
+# Repository: <https://github.com/jrcpulliam/reinfection
 
 # File adjusted to include third infections
 
 # Purpose of this file: 
 ## This file is used to create a dataframe from the CSV file containing
 ## infection data. 
-
-install.packages('data.table', repos = "http://cran.us.r-project.org")
-install.packages('jsonlite', repos = "http://cran.us.r-project.org")
 
 library('jsonlite')
 library('data.table')
@@ -31,6 +21,7 @@ library('data.table')
   file.path('%s', 'ts_data_for_analysis.RDS') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+#load data for second and third reinfections
 ts <- data.table(read.csv(.args[1], comment.char = '#', stringsAsFactors = FALSE))
 
 configpth <- .args[2]
@@ -47,7 +38,6 @@ ts[, ma_tot := frollmean(tot, window_days)]
 ts[, elig := shift(cumsum(cnt), cutoff-1) - shift(cumsum(reinf), 1, fill = 0)] # eligible for reinfection
 ts[, elig.third := shift(cumsum(reinf), cutoff-1) - shift(cumsum(third), 1, fill = 0)] # eligible for second reinfection
 
-#load data for second and third reinfections
 
 saveRDS(ts, file = target)
 
