@@ -10,8 +10,15 @@ ifeq ($(infections),)
 	infections := 2
 endif
 
+all: install all_data all_utils run
 
 R = Rscript $^ $@
+
+
+#Install packages
+install: code/install.R
+	${R}
+
 
 #Get infections argument to determine for which infections this is done 
 $(eval $(infections):;@:)
@@ -63,4 +70,3 @@ output/posterior_90_null.RData utils/fit_functions.RData config_general.json $(i
 
 run: output/posterior_90_null.RData output/sim_90_null.RDS output/sim_plot_90_null.png output/convergence_plot.png
 
-all: all_data all_utils run
