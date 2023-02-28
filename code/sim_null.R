@@ -20,6 +20,9 @@ suppressPackageStartupMessages({
   file.path('output', 'sim_90_null.RDS') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+output_dir <- './output/'
+dir.create(output_dir)
+
 #Get infection data
 ts <- readRDS(.args[2])
 

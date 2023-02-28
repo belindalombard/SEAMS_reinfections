@@ -24,6 +24,10 @@ suppressPackageStartupMessages({
   file.path('output', 'convergence_plot.png')
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+output_dir <- './output/'
+dir.create(output_dir)
+
+
 load(.args[2])
 
 configpth <- .args[3]

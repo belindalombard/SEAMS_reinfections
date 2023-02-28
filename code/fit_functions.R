@@ -14,6 +14,9 @@
 
 target <- tail(.args, 1)
 
+utils <- './utils/'
+dir.create(utils)
+
 #Dataframe "data" given with columns cases (the reported number of cases that enters the suceptible "pool"),
 # date, and observed (the observed number of reinfections coming from the susceptible pool)
 

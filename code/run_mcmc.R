@@ -31,6 +31,9 @@ suppressPackageStartupMessages({
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
 
+output_dir <- './output/'
+dir.create(output_dir)
+
 load(.args[2]) #Load the mcmc functions
 load(.args[3]) #Load the fitting functions
 

@@ -14,6 +14,10 @@ library('ggplot2')
   file.path('%s', 'plotting_fxns.RData') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+utils <- './utils/'
+dir.create(utils)
+
+
 target <- tail(.args, 1)
 
 # Functions from Carl A.B. Pearson (modified):

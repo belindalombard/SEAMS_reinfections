@@ -16,6 +16,10 @@ suppressPackageStartupMessages({
   file.path('utils', 'wave_defs.RDS') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+
+utils <- './utils/'
+dir.create(utils)
+
 ts <- readRDS(.args[1]) # Use to set wave dates as >=15% of wave peak
 
 configpth <- .args[2]

@@ -5,6 +5,7 @@
 # 
 # Repository: <https://github.com/jrcpulliam/reinfection
 
+
 #If infections is empty, set it to second infections. 
 ifeq ($(infections),)
 	infections := 2

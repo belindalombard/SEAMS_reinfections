@@ -23,6 +23,10 @@ suppressPackageStartupMessages({
   "output/simplot_90_null.png" # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+output_dir <- './output/'
+dir.create(output_dir)
+
+
 infections <- .args[5]
 
 ts <- readRDS(.args[2])

@@ -7,6 +7,8 @@
   file.path('generate_data', 'inf_for_sbv.RDS') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+data_dir <- './data/'
+dir.create(data_dir)
 
 target <- tail(.args, 1)
 primary_infections <- .args[1] 

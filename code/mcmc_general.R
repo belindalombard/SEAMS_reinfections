@@ -22,6 +22,10 @@ suppressPackageStartupMessages({
   file.path('utils', 'mcmc_functions.RData') # output
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
+utils <- './utils/'
+dir.create(utils)
+
+
 target <- tail(.args, 1)
 
 lprior <- function(parms=disease_params()) with(parms, {
