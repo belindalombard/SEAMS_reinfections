@@ -37,26 +37,19 @@ Arguments for the make file:
   
 ### Running it Manually
 1. Install the packages
-
-
 2. Prep the data  
   - **Optional: run generate_data.R if you want to have simulated data instead of data**
   - ensure that your data is in data/ts_data.csv
   - the data provided is a sample set of data containing 1st, 2nd and 3rd infections.
-  
 3. Run `code/prep_ts_data.R` which will create a file `data/ts_data_for_analysis.RDS`. 
-  
 4. Create the utils by running the following files
   `wave_defs.R`
   `plotting_fxns.R`
   `mcmc_general.R`
   `fit_functions.R`
-  
 5. Run the MCMC fitting by running the file `run_mcmc.R`. This will create an output file in output.
-
 6. Run the simulations by running `sim_null.R`. This will create an output file in output. 
-
-6. Create the plots with the following files:  
+7. Create the plots with the following files:  
 	- `convergence_plot.R`
 	- `sim_plot.R`
   
