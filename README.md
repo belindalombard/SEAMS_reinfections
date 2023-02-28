@@ -10,7 +10,10 @@ The input for this project is a CSV file containing the number of reported infec
 The CSV file, called ts_data.csv should be placed in a data directory in the repository before running the code. 
 The CSV file should have at minimum the columns: date, cnt (primary observed infections), and reinf (observed reinfections). If you want to run it for third infections, you're CSV file should also contain a column 'third' with observed third infections. 
 
-** Note: If you don't have a data file and you want to use this project for other purposes, the Makefile will create randomised simulated data for you which can be used ** 
+**Note: If you don't have a data file and you want to use this project for other purposes, the Makefile will create randomised simulated data for you which can be used** 
+
+## Output
+The output of the project is some png files and RDS files which is stored in an **output** directory. The file that is used for simulations in the end is a file named sim_plot. 
 
 
 ## Running the code
@@ -35,7 +38,7 @@ Arguments for the make file:
 ### Running it Manually
 1. Install the packages
 
-** Optional: run generate_data.R if you want to have simulated data instead of data **
+**Optional: run generate_data.R if you want to have simulated data instead of data**
 
 2. Prep the data  
   - ensure that your data is in data/ts_data.csv
