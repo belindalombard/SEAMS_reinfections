@@ -2,13 +2,22 @@
 # It uses a simulated dataset representing primary infections & calculate the reinfections & third infections based on a constant hazard coefficient
 # The purposes of this dataset is to test the code
 
+.args <- if (interactive()) sprintf(c(
+  file.path('data', 'ts_data.csv'), # input
+  file.path('generate_data', 'inf_for_sbv.RDS') # output
+), .debug[1]) else commandArgs(trailingOnly = TRUE)
+
+
+target <- tail(.args, 1)
+primary_infections <- .args[1] 
+
 reinf_hazard <- 1.38866e-08
 cutoff <- 90
 
 library('dplyr')
 library('data.table')
 
-data <- readRDS('inf_for_sbv.RDS')
+data <- readRDS(primary_infections)
 
 data[, reinfections := 0]
 data[, eligible_for_reinf := shift(cumsum(infections), cutoff-1)]
@@ -33,4 +42,4 @@ data <- data %>%
     third = third_infections
   )
 
-write.csv(data, file = "data/ts_data.csv")
+write.csv(data, file = target)

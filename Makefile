@@ -10,7 +10,7 @@ ifeq ($(infections),)
 	infections := 2
 endif
 
-all: install all_data all_utils run
+all: install generate_data all_data all_utils run
 
 R = Rscript $^ $@
 
@@ -18,6 +18,13 @@ R = Rscript $^ $@
 #Install packages
 install: code/install.R
 	${R}
+	
+	
+#Generate data if data is not provided / does not exist
+data/ts_data.csv: generate_data/generate_data.R generate_data/inf_for_sbv.RDS
+	${R} 
+
+generate_data: data/ts_data.csv
 
 
 #Get infections argument to determine for which infections this is done 
