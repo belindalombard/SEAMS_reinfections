@@ -44,4 +44,5 @@ vignettes/*.pdf
 #image file and RDS files
 utils
 Rplots.pdf
+data
 output
