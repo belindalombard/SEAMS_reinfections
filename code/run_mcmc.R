@@ -81,7 +81,8 @@ rownames(initBounds) <- c('loglambda','logkappa', 'loglambda2')
 class(initBounds[,2]) <- class(initBounds[,1]) <- 'numeric'
 
 #Run MCMC
-output <- do.mcmc(4)
+
+  output <- do.mcmc(4)
 
 #Save posterior
 lambda.post <- kappa.post <-  lambda2.post <- numeric(0)

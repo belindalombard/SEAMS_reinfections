@@ -23,30 +23,39 @@ dir.create(utils)
 #In the data passed to this function, the susceptible pool will come from cases,
 # and the expected infections & observed columns represents the number of cases expected
 # and the number of cases `reported`
-
 expected <- function(parms = disease_params(), data, delta=cutoff ) with(parms, {
   hz <- lambda * data[date <= omicron_date]$ma_tot
   hz <- c(hz, lambda2 * data[date > omicron_date]$ma_tot)
-      
-  out <- data.frame(date=data$date, expected_infections = rep(0, nrow(data)))
-
-  for (day in 1:(nrow(data)-delta)){
-    tmp <- data$cases[day] * (1-exp(-cumsum(hz[(day+delta):nrow(data)])))
-    out$expected_infections[(day+delta):nrow(data)] <- out$expected_infections[(day+delta):nrow(data)]+tmp
-  }
-  return (out)
+  
+  return ( lapply(1:(nrow(data)-cutoff)
+                  , expected_vec
+                  , data = data
+                  , delta = cutoff
+                  , hz = hz)
+  )
 })
+
+
+expected_vec <- function(day, data, delta=cutoff, hz)  {
+  return(c(rep(0,day-1), data$cases[day] * (1-exp(-cumsum(hz[(day+delta):nrow(data)]))) ))
+}
+
+
+nllikelihood <- function(parms = disease_params(), data) with(parms, {
+  tmp <- expected(parms, data)
+  tmp <- Reduce("+", tmp)
+  tmp <- c(rep(0,90),tmp)
+  log_p <- dnbinom(data$observed, size=1/kappa, mu=c(0,diff(tmp)), log=TRUE)
+  -sum(log_p)
+  return(-sum(log_p))
+})
+
 
 split_path <- function(path) {
   if (dirname(path) %in% c(".", path)) return(basename(path))
   return(c(basename(path), split_path(dirname(path))))
 }
 
-nllikelihood <- function(parms = disease_params(), data) with(parms, {
-  tmp <- expected(parms, data)
-  log_p <- dnbinom(data$observed, size=1/kappa, mu=c(0,diff(tmp$expected_infections)), log=TRUE)
-  -sum(log_p)
-  return(-sum(log_p))
-})
 
-save(expected, nllikelihood, split_path, file = target)
+
+save(expected, nllikelihood, expected_vec, split_path, file = target)
